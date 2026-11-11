@@ -1,0 +1,710 @@
+{
+  "request": {
+    "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+    "workflow": "loan_approval",
+    "workflow_version": 1,
+    "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+    "status": "APPROVED",
+    "is_final": true,
+    "current_stage": "risk_assessment",
+    "reason": "All 3 rule(s) passed at stage 'risk_assessment'",
+    "resume_count": 1,
+    "created_at": "2026-11-11T13:34:31.431+00:00",
+    "updated_at": "2026-11-11T13:34:31.432+00:00"
+  },
+  "input": {
+    "age": 30,
+    "amount": 650000,
+    "annual_income": 900000,
+    "applicant_id": "A-1001",
+    "employment_type": "salaried",
+    "pan": "ABCDE1234F"
+  },
+  "dependency_data": {
+    "credit_bureau": {
+      "bureau_reference": "CB-528322",
+      "score": 780
+    }
+  },
+  "state_history": [
+    {
+      "id": 13,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "from_status": null,
+      "to_status": "RECEIVED",
+      "from_stage": null,
+      "to_stage": null,
+      "reason": "Request accepted",
+      "actor": "api",
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 14,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "from_status": "RECEIVED",
+      "to_status": "IN_PROGRESS",
+      "from_stage": null,
+      "to_stage": "credit_check",
+      "reason": "All 3 rule(s) passed at stage 'eligibility'",
+      "actor": "engine",
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 15,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "from_status": "IN_PROGRESS",
+      "to_status": "RETRY_PENDING",
+      "from_stage": "credit_check",
+      "to_stage": "credit_check",
+      "reason": "Dependency 'credit_bureau' failed at stage 'credit_check' after 3 attempt(s): DependencyError: credit_bureau is unavailable (503)",
+      "actor": "engine",
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 16,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "from_status": "RETRY_PENDING",
+      "to_status": "IN_PROGRESS",
+      "from_stage": "credit_check",
+      "to_stage": "credit_check",
+      "reason": "Retry #1 requested by ops.team",
+      "actor": "ops.team",
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 17,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "from_status": "IN_PROGRESS",
+      "to_status": "IN_PROGRESS",
+      "from_stage": "credit_check",
+      "to_stage": "risk_assessment",
+      "reason": "All 2 rule(s) passed at stage 'credit_check'",
+      "actor": "engine",
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 18,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "from_status": "IN_PROGRESS",
+      "to_status": "APPROVED",
+      "from_stage": "risk_assessment",
+      "to_stage": "risk_assessment",
+      "reason": "All 3 rule(s) passed at stage 'risk_assessment'",
+      "actor": "engine",
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    }
+  ],
+  "audit_events": [
+    {
+      "id": 20,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "REQUEST_RECEIVED",
+      "stage": null,
+      "detail": {
+        "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+        "idempotency_key": "example-4",
+        "idempotency_key_source": "client",
+        "input": {
+          "age": 30,
+          "amount": 650000,
+          "annual_income": 900000,
+          "applicant_id": "A-1001",
+          "employment_type": "salaried",
+          "pan": "ABCDE1234F"
+        },
+        "workflow_version": 1
+      },
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 21,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "STAGE_EVALUATED",
+      "stage": "eligibility",
+      "detail": {
+        "decisive_rule": null,
+        "reason": "All 3 rule(s) passed at stage 'eligibility'",
+        "route": "credit_check",
+        "rules": [
+          {
+            "checks": [
+              {
+                "actual": "ABCDE1234F",
+                "expected": null,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.pan",
+                "note": null,
+                "operator": "exists",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "PAN must be provided",
+            "message": "input.pan is present -> PASS",
+            "route": null,
+            "rule_id": "ELIG-PAN",
+            "status": "PASS",
+            "type": "mandatory"
+          },
+          {
+            "checks": [
+              {
+                "actual": 30,
+                "expected": 21,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.age",
+                "note": null,
+                "operator": ">=",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "Applicant must be at least 21",
+            "message": "input.age = 30 (condition: >= 21) -> PASS",
+            "route": null,
+            "rule_id": "ELIG-AGE",
+            "status": "PASS",
+            "type": "threshold"
+          },
+          {
+            "checks": [
+              {
+                "actual": 900000,
+                "expected": 300000,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.annual_income",
+                "note": null,
+                "operator": ">=",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "Annual income must be at least 3,00,000",
+            "message": "input.annual_income = 900000 (condition: >= 300000) -> PASS",
+            "route": null,
+            "rule_id": "ELIG-INCOME",
+            "status": "PASS",
+            "type": "threshold"
+          }
+        ],
+        "stage": "eligibility"
+      },
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 22,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "DEPENDENCY_CALL",
+      "stage": "credit_check",
+      "detail": {
+        "attempt": 1,
+        "dependency": "credit_bureau",
+        "duration_ms": 0.01,
+        "error": "DependencyError: credit_bureau is unavailable (503)",
+        "max_attempts": 3,
+        "ok": false,
+        "retry_in_ms": 100,
+        "transient": true
+      },
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 23,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "DEPENDENCY_CALL",
+      "stage": "credit_check",
+      "detail": {
+        "attempt": 2,
+        "dependency": "credit_bureau",
+        "duration_ms": 0.01,
+        "error": "DependencyError: credit_bureau is unavailable (503)",
+        "max_attempts": 3,
+        "ok": false,
+        "retry_in_ms": 200,
+        "transient": true
+      },
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 24,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "DEPENDENCY_CALL",
+      "stage": "credit_check",
+      "detail": {
+        "attempt": 3,
+        "dependency": "credit_bureau",
+        "duration_ms": 0.0,
+        "error": "DependencyError: credit_bureau is unavailable (503)",
+        "max_attempts": 3,
+        "ok": false,
+        "transient": true
+      },
+      "created_at": "2026-11-11T13:34:31.431+00:00"
+    },
+    {
+      "id": 25,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "DEPENDENCY_FAILED",
+      "stage": "credit_check",
+      "detail": {
+        "attempts": 3,
+        "dependency": "credit_bureau",
+        "last_error": "DependencyError: credit_bureau is unavailable (503)",
+        "routed_to": "RETRY_PENDING"
+      },
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 26,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "RESUMED",
+      "stage": "credit_check",
+      "detail": {
+        "actor": "ops.team",
+        "previous_status": "RETRY_PENDING",
+        "resume_count": 1
+      },
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 27,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "DEPENDENCY_CALL",
+      "stage": "credit_check",
+      "detail": {
+        "attempt": 1,
+        "dependency": "credit_bureau",
+        "duration_ms": 0.0,
+        "error": "DependencyError: credit_bureau is unavailable (503)",
+        "max_attempts": 3,
+        "ok": false,
+        "retry_in_ms": 100,
+        "transient": true
+      },
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 28,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "DEPENDENCY_CALL",
+      "stage": "credit_check",
+      "detail": {
+        "attempt": 2,
+        "dependency": "credit_bureau",
+        "duration_ms": 0.01,
+        "max_attempts": 3,
+        "ok": true,
+        "response": {
+          "bureau_reference": "CB-528322",
+          "score": 780
+        }
+      },
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 29,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "STAGE_EVALUATED",
+      "stage": "credit_check",
+      "detail": {
+        "decisive_rule": null,
+        "reason": "All 2 rule(s) passed at stage 'credit_check'",
+        "route": "risk_assessment",
+        "rules": [
+          {
+            "checks": [
+              {
+                "actual": 780,
+                "expected": 650,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "deps.credit_bureau.score",
+                "note": null,
+                "operator": ">=",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "Credit score must be at least 650",
+            "message": "deps.credit_bureau.score = 780 (condition: >= 650) -> PASS",
+            "route": null,
+            "rule_id": "CREDIT-MIN",
+            "status": "PASS",
+            "type": "threshold"
+          },
+          {
+            "checks": [
+              {
+                "actual": 780,
+                "expected": 700,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "deps.credit_bureau.score",
+                "note": null,
+                "operator": "<",
+                "present": true,
+                "result": false
+              }
+            ],
+            "description": "Scores from 650 to 699 need a human look",
+            "message": "deps.credit_bureau.score = 780 (condition: < 700) -> NOT_TRIGGERED",
+            "route": null,
+            "rule_id": "CREDIT-BORDERLINE",
+            "status": "NOT_TRIGGERED",
+            "type": "conditional"
+          }
+        ],
+        "stage": "credit_check"
+      },
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 30,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "STAGE_EVALUATED",
+      "stage": "risk_assessment",
+      "detail": {
+        "decisive_rule": null,
+        "reason": "All 3 rule(s) passed at stage 'risk_assessment'",
+        "route": "APPROVED",
+        "rules": [
+          {
+            "checks": [
+              {
+                "actual": 650000,
+                "expected": 5000000,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.amount",
+                "note": null,
+                "operator": "<=",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "Loan amount cannot exceed 50,00,000",
+            "message": "input.amount = 650000 (condition: <= 5000000) -> PASS",
+            "route": null,
+            "rule_id": "RISK-CAP",
+            "status": "PASS",
+            "type": "threshold"
+          },
+          {
+            "checks": [
+              {
+                "actual": 650000,
+                "expected": 9000000,
+                "expected_factor": 10,
+                "expected_from": "input.annual_income",
+                "field": "input.amount",
+                "note": null,
+                "operator": "<=",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "Loan amount cannot exceed 10 times annual income",
+            "message": "input.amount = 650000 (condition: <= 10 x input.annual_income = 9000000) -> PASS",
+            "route": null,
+            "rule_id": "RISK-INCOME-MULTIPLE",
+            "status": "PASS",
+            "type": "threshold"
+          },
+          {
+            "checks": [
+              {
+                "actual": 650000,
+                "expected": 1000000,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.amount",
+                "note": null,
+                "operator": ">",
+                "present": true,
+                "result": false
+              }
+            ],
+            "description": "Loans above 10,00,000 need manual sign-off",
+            "message": "input.amount = 650000 (condition: > 1000000) -> NOT_TRIGGERED",
+            "route": null,
+            "rule_id": "RISK-HIGH-VALUE",
+            "status": "NOT_TRIGGERED",
+            "type": "conditional"
+          }
+        ],
+        "stage": "risk_assessment"
+      },
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    },
+    {
+      "id": 31,
+      "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+      "event_type": "DECISION",
+      "stage": "risk_assessment",
+      "detail": {
+        "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+        "decision": "APPROVED",
+        "decisive_rule": null,
+        "reason": "All 3 rule(s) passed at stage 'risk_assessment'",
+        "workflow_version": 1
+      },
+      "created_at": "2026-11-11T13:34:31.432+00:00"
+    }
+  ],
+  "explanation": {
+    "request_id": "5828be43-f358-4462-8ab1-2c72c08ad4b0",
+    "workflow": "loan_approval",
+    "workflow_version": 1,
+    "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+    "decision": "APPROVED",
+    "summary": "APPROVED: All 3 rule(s) passed at stage 'risk_assessment'",
+    "decided_by": "engine",
+    "decisive_rule": null,
+    "warnings": [],
+    "steps": [
+      {
+        "stage": "eligibility",
+        "dependency_calls": [],
+        "rules": [
+          {
+            "rule_id": "ELIG-PAN",
+            "type": "mandatory",
+            "description": "PAN must be provided",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.pan",
+                "actual": "ABCDE1234F",
+                "operator": "exists",
+                "expected": null,
+                "expected_from": null
+              }
+            ],
+            "message": "input.pan is present -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "ELIG-AGE",
+            "type": "threshold",
+            "description": "Applicant must be at least 21",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.age",
+                "actual": 30,
+                "operator": ">=",
+                "expected": 21,
+                "expected_from": null
+              }
+            ],
+            "message": "input.age = 30 (condition: >= 21) -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "ELIG-INCOME",
+            "type": "threshold",
+            "description": "Annual income must be at least 3,00,000",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.annual_income",
+                "actual": 900000,
+                "operator": ">=",
+                "expected": 300000,
+                "expected_from": null
+              }
+            ],
+            "message": "input.annual_income = 900000 (condition: >= 300000) -> PASS",
+            "decisive": false
+          }
+        ],
+        "outcome": "credit_check",
+        "reason": "All 3 rule(s) passed at stage 'eligibility'"
+      },
+      {
+        "stage": "credit_check",
+        "dependency_calls": [
+          {
+            "attempt": 1,
+            "dependency": "credit_bureau",
+            "duration_ms": 0.01,
+            "error": "DependencyError: credit_bureau is unavailable (503)",
+            "max_attempts": 3,
+            "ok": false,
+            "retry_in_ms": 100,
+            "transient": true
+          },
+          {
+            "attempt": 2,
+            "dependency": "credit_bureau",
+            "duration_ms": 0.01,
+            "error": "DependencyError: credit_bureau is unavailable (503)",
+            "max_attempts": 3,
+            "ok": false,
+            "retry_in_ms": 200,
+            "transient": true
+          },
+          {
+            "attempt": 3,
+            "dependency": "credit_bureau",
+            "duration_ms": 0.0,
+            "error": "DependencyError: credit_bureau is unavailable (503)",
+            "max_attempts": 3,
+            "ok": false,
+            "transient": true
+          }
+        ],
+        "rules": [],
+        "outcome": "RETRY_PENDING",
+        "reason": "credit_bureau unavailable: DependencyError: credit_bureau is unavailable (503)"
+      },
+      {
+        "stage": "credit_check",
+        "dependency_calls": [
+          {
+            "attempt": 1,
+            "dependency": "credit_bureau",
+            "duration_ms": 0.0,
+            "error": "DependencyError: credit_bureau is unavailable (503)",
+            "max_attempts": 3,
+            "ok": false,
+            "retry_in_ms": 100,
+            "transient": true
+          },
+          {
+            "attempt": 2,
+            "dependency": "credit_bureau",
+            "duration_ms": 0.01,
+            "max_attempts": 3,
+            "ok": true,
+            "response": {
+              "bureau_reference": "CB-528322",
+              "score": 780
+            }
+          }
+        ],
+        "rules": [
+          {
+            "rule_id": "CREDIT-MIN",
+            "type": "threshold",
+            "description": "Credit score must be at least 650",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "deps.credit_bureau.score",
+                "actual": 780,
+                "operator": ">=",
+                "expected": 650,
+                "expected_from": null
+              }
+            ],
+            "message": "deps.credit_bureau.score = 780 (condition: >= 650) -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "CREDIT-BORDERLINE",
+            "type": "conditional",
+            "description": "Scores from 650 to 699 need a human look",
+            "status": "NOT_TRIGGERED",
+            "data": [
+              {
+                "field": "deps.credit_bureau.score",
+                "actual": 780,
+                "operator": "<",
+                "expected": 700,
+                "expected_from": null
+              }
+            ],
+            "message": "deps.credit_bureau.score = 780 (condition: < 700) -> NOT_TRIGGERED",
+            "decisive": false
+          }
+        ],
+        "outcome": "risk_assessment",
+        "reason": "All 2 rule(s) passed at stage 'credit_check'"
+      },
+      {
+        "stage": "risk_assessment",
+        "dependency_calls": [],
+        "rules": [
+          {
+            "rule_id": "RISK-CAP",
+            "type": "threshold",
+            "description": "Loan amount cannot exceed 50,00,000",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.amount",
+                "actual": 650000,
+                "operator": "<=",
+                "expected": 5000000,
+                "expected_from": null
+              }
+            ],
+            "message": "input.amount = 650000 (condition: <= 5000000) -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "RISK-INCOME-MULTIPLE",
+            "type": "threshold",
+            "description": "Loan amount cannot exceed 10 times annual income",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.amount",
+                "actual": 650000,
+                "operator": "<=",
+                "expected": 9000000,
+                "expected_from": "input.annual_income"
+              }
+            ],
+            "message": "input.amount = 650000 (condition: <= 10 x input.annual_income = 9000000) -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "RISK-HIGH-VALUE",
+            "type": "conditional",
+            "description": "Loans above 10,00,000 need manual sign-off",
+            "status": "NOT_TRIGGERED",
+            "data": [
+              {
+                "field": "input.amount",
+                "actual": 650000,
+                "operator": ">",
+                "expected": 1000000,
+                "expected_from": null
+              }
+            ],
+            "message": "input.amount = 650000 (condition: > 1000000) -> NOT_TRIGGERED",
+            "decisive": false
+          }
+        ],
+        "outcome": "APPROVED",
+        "reason": "All 3 rule(s) passed at stage 'risk_assessment'"
+      }
+    ],
+    "narrative": [
+      "Request received for workflow 'loan_approval' v1; input passed schema validation.",
+      "[eligibility] ELIG-PAN: input.pan is present -> PASS.",
+      "[eligibility] ELIG-AGE: input.age = 30 (condition: >= 21) -> PASS.",
+      "[eligibility] ELIG-INCOME: input.annual_income = 900000 (condition: >= 300000) -> PASS.",
+      "[eligibility] Outcome: credit_check. All 3 rule(s) passed at stage 'eligibility'.",
+      "[credit_check] credit_bureau attempt 1/3 failed: DependencyError: credit_bureau is unavailable (503).",
+      "[credit_check] credit_bureau attempt 2/3 failed: DependencyError: credit_bureau is unavailable (503).",
+      "[credit_check] credit_bureau attempt 3/3 failed: DependencyError: credit_bureau is unavailable (503).",
+      "[credit_check] credit_bureau still failing after 3 attempt(s); request moved to RETRY_PENDING.",
+      "Retry #1 requested by ops.team; resuming at stage 'credit_check'.",
+      "[credit_check] credit_bureau attempt 1/3 failed: DependencyError: credit_bureau is unavailable (503).",
+      "[credit_check] credit_bureau answered on attempt 2: {'bureau_reference': 'CB-528322', 'score': 780}.",
+      "[credit_check] CREDIT-MIN: deps.credit_bureau.score = 780 (condition: >= 650) -> PASS.",
+      "[credit_check] CREDIT-BORDERLINE: deps.credit_bureau.score = 780 (condition: < 700) -> NOT_TRIGGERED.",
+      "[credit_check] Outcome: risk_assessment. All 2 rule(s) passed at stage 'credit_check'.",
+      "[risk_assessment] RISK-CAP: input.amount = 650000 (condition: <= 5000000) -> PASS.",
+      "[risk_assessment] RISK-INCOME-MULTIPLE: input.amount = 650000 (condition: <= 10 x input.annual_income = 9000000) -> PASS.",
+      "[risk_assessment] RISK-HIGH-VALUE: input.amount = 650000 (condition: > 1000000) -> NOT_TRIGGERED.",
+      "[risk_assessment] Outcome: APPROVED. All 3 rule(s) passed at stage 'risk_assessment'."
+    ]
+  }
+}

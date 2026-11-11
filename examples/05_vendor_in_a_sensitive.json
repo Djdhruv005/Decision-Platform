@@ -1,0 +1,403 @@
+{
+  "request": {
+    "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+    "workflow": "vendor_approval",
+    "workflow_version": 1,
+    "config_hash": "1bcbfbd6b2dc13973356ce87f11079c710b6e2f047bdff5dd45ac7693fbc6cc6",
+    "status": "MANUAL_REVIEW",
+    "is_final": false,
+    "current_stage": "compliance",
+    "reason": "Rule COMP-SENSITIVE (Sensitive categories or large contracts need manual sign-off) triggered at stage 'compliance': input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+    "resume_count": 0,
+    "created_at": "2026-11-11T13:34:31.433+00:00",
+    "updated_at": "2026-11-11T13:34:31.435+00:00"
+  },
+  "input": {
+    "annual_contract_value": 400000,
+    "category": "defense",
+    "gst_number": "29ABCDE1234F1Z5",
+    "legal_name": "Acme Supplies Pvt Ltd",
+    "vendor_id": "V-204",
+    "years_in_business": 6
+  },
+  "dependency_data": {
+    "vendor_registry": {
+      "blacklisted": false,
+      "registered": true
+    }
+  },
+  "state_history": [
+    {
+      "id": 19,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "from_status": null,
+      "to_status": "RECEIVED",
+      "from_stage": null,
+      "to_stage": null,
+      "reason": "Request accepted",
+      "actor": "api",
+      "created_at": "2026-11-11T13:34:31.433+00:00"
+    },
+    {
+      "id": 20,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "from_status": "RECEIVED",
+      "to_status": "IN_PROGRESS",
+      "from_stage": null,
+      "to_stage": "compliance",
+      "reason": "All 2 rule(s) passed at stage 'documentation'",
+      "actor": "engine",
+      "created_at": "2026-11-11T13:34:31.435+00:00"
+    },
+    {
+      "id": 21,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "from_status": "IN_PROGRESS",
+      "to_status": "MANUAL_REVIEW",
+      "from_stage": "compliance",
+      "to_stage": "compliance",
+      "reason": "Rule COMP-SENSITIVE (Sensitive categories or large contracts need manual sign-off) triggered at stage 'compliance': input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+      "actor": "engine",
+      "created_at": "2026-11-11T13:34:31.435+00:00"
+    }
+  ],
+  "audit_events": [
+    {
+      "id": 32,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "event_type": "REQUEST_RECEIVED",
+      "stage": null,
+      "detail": {
+        "config_hash": "1bcbfbd6b2dc13973356ce87f11079c710b6e2f047bdff5dd45ac7693fbc6cc6",
+        "idempotency_key": "example-5",
+        "idempotency_key_source": "client",
+        "input": {
+          "annual_contract_value": 400000,
+          "category": "defense",
+          "gst_number": "29ABCDE1234F1Z5",
+          "legal_name": "Acme Supplies Pvt Ltd",
+          "vendor_id": "V-204",
+          "years_in_business": 6
+        },
+        "workflow_version": 1
+      },
+      "created_at": "2026-11-11T13:34:31.433+00:00"
+    },
+    {
+      "id": 33,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "event_type": "STAGE_EVALUATED",
+      "stage": "documentation",
+      "detail": {
+        "decisive_rule": null,
+        "reason": "All 2 rule(s) passed at stage 'documentation'",
+        "route": "compliance",
+        "rules": [
+          {
+            "checks": [
+              {
+                "actual": "29ABCDE1234F1Z5",
+                "expected": null,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.gst_number",
+                "note": null,
+                "operator": "exists",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "GST number must be provided",
+            "message": "input.gst_number is present -> PASS",
+            "route": null,
+            "rule_id": "DOC-GST",
+            "status": "PASS",
+            "type": "mandatory"
+          },
+          {
+            "checks": [
+              {
+                "actual": 6,
+                "expected": 2,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.years_in_business",
+                "note": null,
+                "operator": ">=",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "New vendors (under 2 years) go to a human instead of being rejected",
+            "message": "input.years_in_business = 6 (condition: >= 2) -> PASS",
+            "route": null,
+            "rule_id": "DOC-TRACK-RECORD",
+            "status": "PASS",
+            "type": "threshold"
+          }
+        ],
+        "stage": "documentation"
+      },
+      "created_at": "2026-11-11T13:34:31.435+00:00"
+    },
+    {
+      "id": 34,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "event_type": "DEPENDENCY_CALL",
+      "stage": "compliance",
+      "detail": {
+        "attempt": 1,
+        "dependency": "vendor_registry",
+        "duration_ms": 0.01,
+        "max_attempts": 2,
+        "ok": true,
+        "response": {
+          "blacklisted": false,
+          "registered": true
+        }
+      },
+      "created_at": "2026-11-11T13:34:31.435+00:00"
+    },
+    {
+      "id": 35,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "event_type": "STAGE_EVALUATED",
+      "stage": "compliance",
+      "detail": {
+        "decisive_rule": "COMP-SENSITIVE",
+        "reason": "Rule COMP-SENSITIVE (Sensitive categories or large contracts need manual sign-off) triggered at stage 'compliance': input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+        "route": "MANUAL_REVIEW",
+        "rules": [
+          {
+            "checks": [
+              {
+                "actual": false,
+                "expected": false,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "deps.vendor_registry.blacklisted",
+                "note": null,
+                "operator": "==",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "Vendor must not be blacklisted",
+            "message": "deps.vendor_registry.blacklisted = False (condition: == False) -> PASS",
+            "route": null,
+            "rule_id": "COMP-BLACKLIST",
+            "status": "PASS",
+            "type": "threshold"
+          },
+          {
+            "checks": [
+              {
+                "actual": "defense",
+                "expected": [
+                  "defense",
+                  "hazardous_materials"
+                ],
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.category",
+                "note": null,
+                "operator": "in",
+                "present": true,
+                "result": true
+              },
+              {
+                "actual": 400000,
+                "expected": 2500000,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.annual_contract_value",
+                "note": null,
+                "operator": ">",
+                "present": true,
+                "result": false
+              }
+            ],
+            "description": "Sensitive categories or large contracts need manual sign-off",
+            "message": "input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+            "route": "MANUAL_REVIEW",
+            "rule_id": "COMP-SENSITIVE",
+            "status": "TRIGGERED",
+            "type": "conditional"
+          }
+        ],
+        "stage": "compliance"
+      },
+      "created_at": "2026-11-11T13:34:31.435+00:00"
+    },
+    {
+      "id": 36,
+      "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+      "event_type": "DECISION",
+      "stage": "compliance",
+      "detail": {
+        "config_hash": "1bcbfbd6b2dc13973356ce87f11079c710b6e2f047bdff5dd45ac7693fbc6cc6",
+        "decision": "MANUAL_REVIEW",
+        "decisive_rule": "COMP-SENSITIVE",
+        "reason": "Rule COMP-SENSITIVE (Sensitive categories or large contracts need manual sign-off) triggered at stage 'compliance': input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+        "workflow_version": 1
+      },
+      "created_at": "2026-11-11T13:34:31.435+00:00"
+    }
+  ],
+  "explanation": {
+    "request_id": "ac1582ae-6c3c-4fdd-af81-20fd064c4aa1",
+    "workflow": "vendor_approval",
+    "workflow_version": 1,
+    "config_hash": "1bcbfbd6b2dc13973356ce87f11079c710b6e2f047bdff5dd45ac7693fbc6cc6",
+    "decision": "MANUAL_REVIEW",
+    "summary": "MANUAL_REVIEW: Rule COMP-SENSITIVE (Sensitive categories or large contracts need manual sign-off) triggered at stage 'compliance': input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+    "decided_by": "engine",
+    "decisive_rule": {
+      "stage": "compliance",
+      "rule_id": "COMP-SENSITIVE",
+      "type": "conditional",
+      "description": "Sensitive categories or large contracts need manual sign-off",
+      "status": "TRIGGERED",
+      "data": [
+        {
+          "field": "input.category",
+          "actual": "defense",
+          "operator": "in",
+          "expected": [
+            "defense",
+            "hazardous_materials"
+          ],
+          "expected_from": null
+        },
+        {
+          "field": "input.annual_contract_value",
+          "actual": 400000,
+          "operator": ">",
+          "expected": 2500000,
+          "expected_from": null
+        }
+      ],
+      "message": "input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+      "decisive": true
+    },
+    "warnings": [],
+    "steps": [
+      {
+        "stage": "documentation",
+        "dependency_calls": [],
+        "rules": [
+          {
+            "rule_id": "DOC-GST",
+            "type": "mandatory",
+            "description": "GST number must be provided",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.gst_number",
+                "actual": "29ABCDE1234F1Z5",
+                "operator": "exists",
+                "expected": null,
+                "expected_from": null
+              }
+            ],
+            "message": "input.gst_number is present -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "DOC-TRACK-RECORD",
+            "type": "threshold",
+            "description": "New vendors (under 2 years) go to a human instead of being rejected",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.years_in_business",
+                "actual": 6,
+                "operator": ">=",
+                "expected": 2,
+                "expected_from": null
+              }
+            ],
+            "message": "input.years_in_business = 6 (condition: >= 2) -> PASS",
+            "decisive": false
+          }
+        ],
+        "outcome": "compliance",
+        "reason": "All 2 rule(s) passed at stage 'documentation'"
+      },
+      {
+        "stage": "compliance",
+        "dependency_calls": [
+          {
+            "attempt": 1,
+            "dependency": "vendor_registry",
+            "duration_ms": 0.01,
+            "max_attempts": 2,
+            "ok": true,
+            "response": {
+              "blacklisted": false,
+              "registered": true
+            }
+          }
+        ],
+        "rules": [
+          {
+            "rule_id": "COMP-BLACKLIST",
+            "type": "threshold",
+            "description": "Vendor must not be blacklisted",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "deps.vendor_registry.blacklisted",
+                "actual": false,
+                "operator": "==",
+                "expected": false,
+                "expected_from": null
+              }
+            ],
+            "message": "deps.vendor_registry.blacklisted = False (condition: == False) -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "COMP-SENSITIVE",
+            "type": "conditional",
+            "description": "Sensitive categories or large contracts need manual sign-off",
+            "status": "TRIGGERED",
+            "data": [
+              {
+                "field": "input.category",
+                "actual": "defense",
+                "operator": "in",
+                "expected": [
+                  "defense",
+                  "hazardous_materials"
+                ],
+                "expected_from": null
+              },
+              {
+                "field": "input.annual_contract_value",
+                "actual": 400000,
+                "operator": ">",
+                "expected": 2500000,
+                "expected_from": null
+              }
+            ],
+            "message": "input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED",
+            "decisive": true
+          }
+        ],
+        "outcome": "MANUAL_REVIEW",
+        "reason": "Rule COMP-SENSITIVE (Sensitive categories or large contracts need manual sign-off) triggered at stage 'compliance': input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED"
+      }
+    ],
+    "narrative": [
+      "Request received for workflow 'vendor_approval' v1; input passed schema validation.",
+      "[documentation] DOC-GST: input.gst_number is present -> PASS.",
+      "[documentation] DOC-TRACK-RECORD: input.years_in_business = 6 (condition: >= 2) -> PASS.",
+      "[documentation] Outcome: compliance. All 2 rule(s) passed at stage 'documentation'.",
+      "[compliance] vendor_registry answered on attempt 1: {'blacklisted': False, 'registered': True}.",
+      "[compliance] COMP-BLACKLIST: deps.vendor_registry.blacklisted = False (condition: == False) -> PASS.",
+      "[compliance] COMP-SENSITIVE: input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED.",
+      "[compliance] Outcome: MANUAL_REVIEW. Rule COMP-SENSITIVE (Sensitive categories or large contracts need manual sign-off) triggered at stage 'compliance': input.category = 'defense' (condition: in ['defense', 'hazardous_materials']); input.annual_contract_value = 400000 (condition: > 2500000) -> TRIGGERED."
+    ]
+  }
+}

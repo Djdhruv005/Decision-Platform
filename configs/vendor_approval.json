@@ -1,0 +1,112 @@
+{
+  "workflow": "vendor_approval",
+  "version": 1,
+  "description": "Vendor onboarding: documentation checks, then a compliance lookup.",
+  "max_resumes": 2,
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "vendor_id",
+      "legal_name",
+      "category",
+      "annual_contract_value"
+    ],
+    "properties": {
+      "vendor_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "legal_name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "category": {
+        "type": "string"
+      },
+      "annual_contract_value": {
+        "type": "number",
+        "minimum": 0
+      },
+      "gst_number": {
+        "type": "string"
+      },
+      "years_in_business": {
+        "type": "number",
+        "minimum": 0
+      }
+    }
+  },
+  "stages": [
+    {
+      "id": "documentation",
+      "rules": [
+        {
+          "id": "DOC-GST",
+          "type": "mandatory",
+          "field": "input.gst_number",
+          "description": "GST number must be provided"
+        },
+        {
+          "id": "DOC-TRACK-RECORD",
+          "type": "threshold",
+          "field": "input.years_in_business",
+          "op": ">=",
+          "value": 2,
+          "description": "New vendors (under 2 years) go to a human instead of being rejected",
+          "on_fail": "MANUAL_REVIEW"
+        }
+      ],
+      "on_pass": "compliance",
+      "on_fail": "REJECTED"
+    },
+    {
+      "id": "compliance",
+      "dependency": {
+        "name": "vendor_registry",
+        "input": {
+          "vendor_id": "input.vendor_id"
+        },
+        "retry": {
+          "max_attempts": 2,
+          "backoff_ms": 50
+        },
+        "on_failure": "MANUAL_REVIEW"
+      },
+      "rules": [
+        {
+          "id": "COMP-BLACKLIST",
+          "type": "threshold",
+          "field": "deps.vendor_registry.blacklisted",
+          "op": "==",
+          "value": false,
+          "description": "Vendor must not be blacklisted"
+        },
+        {
+          "id": "COMP-SENSITIVE",
+          "type": "conditional",
+          "description": "Sensitive categories or large contracts need manual sign-off",
+          "if": {
+            "any": [
+              {
+                "field": "input.category",
+                "op": "in",
+                "value": [
+                  "defense",
+                  "hazardous_materials"
+                ]
+              },
+              {
+                "field": "input.annual_contract_value",
+                "op": ">",
+                "value": 2500000
+              }
+            ]
+          },
+          "then": "MANUAL_REVIEW"
+        }
+      ],
+      "on_pass": "APPROVED",
+      "on_fail": "REJECTED"
+    }
+  ]
+}

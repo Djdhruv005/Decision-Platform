@@ -1,0 +1,259 @@
+{
+  "request": {
+    "request_id": "f414fa3b-9aaa-40f4-b6d0-fb3f3675e39e",
+    "workflow": "loan_approval",
+    "workflow_version": 1,
+    "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+    "status": "REJECTED",
+    "is_final": true,
+    "current_stage": "eligibility",
+    "reason": "Rule ELIG-INCOME (Annual income must be at least 3,00,000) failed at stage 'eligibility': input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+    "resume_count": 0,
+    "created_at": "2026-11-11T13:34:31.436+00:00",
+    "updated_at": "2026-11-11T13:34:31.436+00:00"
+  },
+  "input": {
+    "age": 30,
+    "amount": 500000,
+    "annual_income": 250000,
+    "applicant_id": "A-1001",
+    "employment_type": "salaried",
+    "pan": "ABCDE1234F"
+  },
+  "dependency_data": {},
+  "state_history": [
+    {
+      "id": 22,
+      "request_id": "f414fa3b-9aaa-40f4-b6d0-fb3f3675e39e",
+      "from_status": null,
+      "to_status": "RECEIVED",
+      "from_stage": null,
+      "to_stage": null,
+      "reason": "Request accepted",
+      "actor": "api",
+      "created_at": "2026-11-11T13:34:31.436+00:00"
+    },
+    {
+      "id": 23,
+      "request_id": "f414fa3b-9aaa-40f4-b6d0-fb3f3675e39e",
+      "from_status": "RECEIVED",
+      "to_status": "REJECTED",
+      "from_stage": null,
+      "to_stage": "eligibility",
+      "reason": "Rule ELIG-INCOME (Annual income must be at least 3,00,000) failed at stage 'eligibility': input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+      "actor": "engine",
+      "created_at": "2026-11-11T13:34:31.436+00:00"
+    }
+  ],
+  "audit_events": [
+    {
+      "id": 37,
+      "request_id": "f414fa3b-9aaa-40f4-b6d0-fb3f3675e39e",
+      "event_type": "REQUEST_RECEIVED",
+      "stage": null,
+      "detail": {
+        "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+        "idempotency_key": "example-6-before",
+        "idempotency_key_source": "client",
+        "input": {
+          "age": 30,
+          "amount": 500000,
+          "annual_income": 250000,
+          "applicant_id": "A-1001",
+          "employment_type": "salaried",
+          "pan": "ABCDE1234F"
+        },
+        "workflow_version": 1
+      },
+      "created_at": "2026-11-11T13:34:31.436+00:00"
+    },
+    {
+      "id": 38,
+      "request_id": "f414fa3b-9aaa-40f4-b6d0-fb3f3675e39e",
+      "event_type": "STAGE_EVALUATED",
+      "stage": "eligibility",
+      "detail": {
+        "decisive_rule": "ELIG-INCOME",
+        "reason": "Rule ELIG-INCOME (Annual income must be at least 3,00,000) failed at stage 'eligibility': input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+        "route": "REJECTED",
+        "rules": [
+          {
+            "checks": [
+              {
+                "actual": "ABCDE1234F",
+                "expected": null,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.pan",
+                "note": null,
+                "operator": "exists",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "PAN must be provided",
+            "message": "input.pan is present -> PASS",
+            "route": null,
+            "rule_id": "ELIG-PAN",
+            "status": "PASS",
+            "type": "mandatory"
+          },
+          {
+            "checks": [
+              {
+                "actual": 30,
+                "expected": 21,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.age",
+                "note": null,
+                "operator": ">=",
+                "present": true,
+                "result": true
+              }
+            ],
+            "description": "Applicant must be at least 21",
+            "message": "input.age = 30 (condition: >= 21) -> PASS",
+            "route": null,
+            "rule_id": "ELIG-AGE",
+            "status": "PASS",
+            "type": "threshold"
+          },
+          {
+            "checks": [
+              {
+                "actual": 250000,
+                "expected": 300000,
+                "expected_factor": null,
+                "expected_from": null,
+                "field": "input.annual_income",
+                "note": null,
+                "operator": ">=",
+                "present": true,
+                "result": false
+              }
+            ],
+            "description": "Annual income must be at least 3,00,000",
+            "message": "input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+            "route": "REJECTED",
+            "rule_id": "ELIG-INCOME",
+            "status": "FAIL",
+            "type": "threshold"
+          }
+        ],
+        "stage": "eligibility"
+      },
+      "created_at": "2026-11-11T13:34:31.436+00:00"
+    },
+    {
+      "id": 39,
+      "request_id": "f414fa3b-9aaa-40f4-b6d0-fb3f3675e39e",
+      "event_type": "DECISION",
+      "stage": "eligibility",
+      "detail": {
+        "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+        "decision": "REJECTED",
+        "decisive_rule": "ELIG-INCOME",
+        "reason": "Rule ELIG-INCOME (Annual income must be at least 3,00,000) failed at stage 'eligibility': input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+        "workflow_version": 1
+      },
+      "created_at": "2026-11-11T13:34:31.436+00:00"
+    }
+  ],
+  "explanation": {
+    "request_id": "f414fa3b-9aaa-40f4-b6d0-fb3f3675e39e",
+    "workflow": "loan_approval",
+    "workflow_version": 1,
+    "config_hash": "a40ffe881fb554d33f94174024ed2595eedbc6174c2bfd77b70ff64ab67fd318",
+    "decision": "REJECTED",
+    "summary": "REJECTED: Rule ELIG-INCOME (Annual income must be at least 3,00,000) failed at stage 'eligibility': input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+    "decided_by": "engine",
+    "decisive_rule": {
+      "stage": "eligibility",
+      "rule_id": "ELIG-INCOME",
+      "type": "threshold",
+      "description": "Annual income must be at least 3,00,000",
+      "status": "FAIL",
+      "data": [
+        {
+          "field": "input.annual_income",
+          "actual": 250000,
+          "operator": ">=",
+          "expected": 300000,
+          "expected_from": null
+        }
+      ],
+      "message": "input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+      "decisive": true
+    },
+    "warnings": [],
+    "steps": [
+      {
+        "stage": "eligibility",
+        "dependency_calls": [],
+        "rules": [
+          {
+            "rule_id": "ELIG-PAN",
+            "type": "mandatory",
+            "description": "PAN must be provided",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.pan",
+                "actual": "ABCDE1234F",
+                "operator": "exists",
+                "expected": null,
+                "expected_from": null
+              }
+            ],
+            "message": "input.pan is present -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "ELIG-AGE",
+            "type": "threshold",
+            "description": "Applicant must be at least 21",
+            "status": "PASS",
+            "data": [
+              {
+                "field": "input.age",
+                "actual": 30,
+                "operator": ">=",
+                "expected": 21,
+                "expected_from": null
+              }
+            ],
+            "message": "input.age = 30 (condition: >= 21) -> PASS",
+            "decisive": false
+          },
+          {
+            "rule_id": "ELIG-INCOME",
+            "type": "threshold",
+            "description": "Annual income must be at least 3,00,000",
+            "status": "FAIL",
+            "data": [
+              {
+                "field": "input.annual_income",
+                "actual": 250000,
+                "operator": ">=",
+                "expected": 300000,
+                "expected_from": null
+              }
+            ],
+            "message": "input.annual_income = 250000 (condition: >= 300000) -> FAIL",
+            "decisive": true
+          }
+        ],
+        "outcome": "REJECTED",
+        "reason": "Rule ELIG-INCOME (Annual income must be at least 3,00,000) failed at stage 'eligibility': input.annual_income = 250000 (condition: >= 300000) -> FAIL"
+      }
+    ],
+    "narrative": [
+      "Request received for workflow 'loan_approval' v1; input passed schema validation.",
+      "[eligibility] ELIG-PAN: input.pan is present -> PASS.",
+      "[eligibility] ELIG-AGE: input.age = 30 (condition: >= 21) -> PASS.",
+      "[eligibility] ELIG-INCOME: input.annual_income = 250000 (condition: >= 300000) -> FAIL.",
+      "[eligibility] Outcome: REJECTED. Rule ELIG-INCOME (Annual income must be at least 3,00,000) failed at stage 'eligibility': input.annual_income = 250000 (condition: >= 300000) -> FAIL."
+    ]
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "workflow": "loan_approval",
+  "version": 1,
+  "description": "Personal loan application: eligibility, credit check, then risk assessment.",
+  "max_resumes": 3,
+  "input_schema": {
+    "type": "object",
+    "required": [
+      "applicant_id",
+      "age",
+      "annual_income",
+      "amount"
+    ],
+    "properties": {
+      "applicant_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "pan": {
+        "type": "string",
+        "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$"
+      },
+      "age": {
+        "type": "integer",
+        "minimum": 0
+      },
+      "annual_income": {
+        "type": "number",
+        "minimum": 0
+      },
+      "amount": {
+        "type": "number",
+        "exclusiveMinimum": 0
+      },
+      "employment_type": {
+        "enum": [
+          "salaried",
+          "self_employed"
+        ]
+      }
+    }
+  },
+  "stages": [
+    {
+      "id": "eligibility",
+      "description": "Basic checks that need no external data.",
+      "rules": [
+        {
+          "id": "ELIG-PAN",
+          "type": "mandatory",
+          "field": "input.pan",
+          "description": "PAN must be provided"
+        },
+        {
+          "id": "ELIG-AGE",
+          "type": "threshold",
+          "field": "input.age",
+          "op": ">=",
+          "value": 21,
+          "description": "Applicant must be at least 21"
+        },
+        {
+          "id": "ELIG-INCOME",
+          "type": "threshold",
+          "field": "input.annual_income",
+          "op": ">=",
+          "value": 300000,
+          "description": "Annual income must be at least 3,00,000"
+        }
+      ],
+      "on_pass": "credit_check",
+      "on_fail": "REJECTED"
+    },
+    {
+      "id": "credit_check",
+      "description": "Fetch the credit score from the bureau and apply score rules.",
+      "dependency": {
+        "name": "credit_bureau",
+        "input": {
+          "applicant_id": "input.applicant_id"
+        },
+        "retry": {
+          "max_attempts": 3,
+          "backoff_ms": 100,
+          "backoff_multiplier": 2
+        },
+        "on_failure": "RETRY_PENDING"
+      },
+      "rules": [
+        {
+          "id": "CREDIT-MIN",
+          "type": "threshold",
+          "field": "deps.credit_bureau.score",
+          "op": ">=",
+          "value": 650,
+          "description": "Credit score must be at least 650"
+        },
+        {
+          "id": "CREDIT-BORDERLINE",
+          "type": "conditional",
+          "description": "Scores from 650 to 699 need a human look",
+          "if": {
+            "field": "deps.credit_bureau.score",
+            "op": "<",
+            "value": 700
+          },
+          "then": "MANUAL_REVIEW"
+        }
+      ],
+      "on_pass": "risk_assessment",
+      "on_fail": "REJECTED"
+    },
+    {
+      "id": "risk_assessment",
+      "description": "Loan size checks.",
+      "rules": [
+        {
+          "id": "RISK-CAP",
+          "type": "threshold",
+          "field": "input.amount",
+          "op": "<=",
+          "value": 5000000,
+          "description": "Loan amount cannot exceed 50,00,000"
+        },
+        {
+          "id": "RISK-INCOME-MULTIPLE",
+          "type": "threshold",
+          "field": "input.amount",
+          "op": "<=",
+          "value_ref": "input.annual_income",
+          "value_factor": 10,
+          "description": "Loan amount cannot exceed 10 times annual income"
+        },
+        {
+          "id": "RISK-HIGH-VALUE",
+          "type": "conditional",
+          "description": "Loans above 10,00,000 need manual sign-off",
+          "if": {
+            "field": "input.amount",
+            "op": ">",
+            "value": 1000000
+          },
+          "then": "MANUAL_REVIEW"
+        }
+      ],
+      "on_pass": "APPROVED",
+      "on_fail": "REJECTED"
+    }
+  ]
+}
